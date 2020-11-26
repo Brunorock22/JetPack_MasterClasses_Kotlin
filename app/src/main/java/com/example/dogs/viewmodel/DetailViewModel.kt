@@ -9,7 +9,7 @@ class DetailViewModel : ViewModel() {
     val dogLiveDate = MutableLiveData<Dog>()
 
     fun fetch() {
-        val dog1 = Dog("Corgi", "15 years", "trertgh", "esg", "rgfes", "srgse")
+        val dog1 = Dog("Corgi", "15 years", "trertgh", "esg", "rgfes", "srgse","")
         dogLiveDate.value = dog1
     }
 }

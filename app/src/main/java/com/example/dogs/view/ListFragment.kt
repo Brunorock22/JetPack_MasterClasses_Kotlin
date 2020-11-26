@@ -37,6 +37,14 @@ class ListFragment : Fragment() {
         }
 
         observeViewModel()
+
+        refreshLayout.setOnRefreshListener {
+            dogsList.visibility = View.GONE
+            textError.visibility = View.GONE
+            loadingView.visibility = View.GONE
+            viewModel.refresh()
+            refreshLayout.isRefreshing = false
+        }
     }
 
     private fun observeViewModel() {
@@ -50,7 +58,15 @@ class ListFragment : Fragment() {
 
         viewModel.dogsLoadError.observe(this, Observer {
             it?.let {
-                textError.visibility = if (it) View.VISIBLE else View.GONE
+                if (it) {
+
+                    textError.visibility = View.VISIBLE
+                    textError.text = "Error while getting datas"
+                } else {
+                    textError.visibility = View.INVISIBLE
+
+                }
+
             }
         })
 
