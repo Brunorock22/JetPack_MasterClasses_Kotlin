@@ -3,10 +3,13 @@ package com.example.dogs.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dogs.R
 import com.example.dogs.model.Dog
+import com.example.dogs.util.getProgressDrawable
+import com.example.dogs.util.loadImage
 import kotlinx.android.synthetic.main.item_dog.view.*
 
 class DogsListAdapter(val dogsList: ArrayList<Dog>) :
@@ -31,6 +34,10 @@ class DogsListAdapter(val dogsList: ArrayList<Dog>) :
     override fun onBindViewHolder(holder: DogViewHolder, position: Int) {
         holder.itemView.name.text = dogsList[position].dogBreed
         holder.itemView.lifespan.text = dogsList[position].lifeSpan
+        holder.itemView.imageView.loadImage(
+            dogsList[position].imgUrl,
+            getProgressDrawable(holder.itemView.imageView.context)
+        )
         holder.itemView.setOnClickListener {
             Navigation.findNavController(it).navigate(ListFragmentDirections.actionDetailFragment())
         }
