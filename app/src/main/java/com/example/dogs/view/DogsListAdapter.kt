@@ -3,7 +3,6 @@ package com.example.dogs.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dogs.R
@@ -39,7 +38,9 @@ class DogsListAdapter(val dogsList: ArrayList<Dog>) :
             getProgressDrawable(holder.itemView.imageView.context)
         )
         holder.itemView.setOnClickListener {
-            Navigation.findNavController(it).navigate(ListFragmentDirections.actionDetailFragment())
+            val action = ListFragmentDirections.actionDetailFragment()
+            action.dogUuid = dogsList[position].uui
+            Navigation.findNavController(it).navigate(action)
         }
     }
 
