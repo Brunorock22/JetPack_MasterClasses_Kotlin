@@ -32,3 +32,5 @@ data class Dog(
     @PrimaryKey(autoGenerate = true)
     var uui: Int = 0
 }
+
+data class DogPalette(var color: Int)
