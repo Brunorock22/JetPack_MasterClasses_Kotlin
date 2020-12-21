@@ -1,5 +1,6 @@
 package com.example.dogs.view
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import androidx.palette.graphics.Palette
@@ -8,9 +9,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.dogs.model.DogPalette
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,6 +17,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.example.dogs.R
 import com.example.dogs.databinding.FragmentDetailBinding
+import com.example.dogs.databinding.SendSmsDialogBinding
+import com.example.dogs.model.Dog
+import com.example.dogs.model.SmsInfo
 import com.example.dogs.viewmodel.DetailViewModel
 import kotlinx.android.synthetic.main.fragment_detail.*
 
@@ -27,12 +29,15 @@ class DetailFragment : Fragment() {
     private lateinit var viewModel: DetailViewModel
     private var dogId: Int = 0
     lateinit var binding: FragmentDetailBinding
+    private var sendSms = false
+    private var currentDog: Dog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true)
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail, container, false)
 
         return binding.root
@@ -52,7 +57,7 @@ class DetailFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.dogLiveDate.observe(this, Observer { dog ->
-
+            currentDog = dog
             dog?.let { it ->
                 dogContainer.visibility = View.VISIBLE
                 loadingViewDetail.visibility = View.GONE
@@ -96,4 +101,60 @@ class DetailFragment : Fragment() {
         })
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.detail_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_send_smsm -> {
+                sendSms = true
+                (activity as MainActivity).checkSmsPermission()
+            }
+
+            R.id.action_share -> {
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun onPermissionResult(permissionGranted: Boolean) {
+        if (sendSms && permissionGranted) {
+            context?.let {
+
+
+                    val smsInfo = SmsInfo("", "${currentDog?.dogBreed}", currentDog?.imgUrl)
+
+                    val dialogBiding = DataBindingUtil.inflate<SendSmsDialogBinding>(
+                        LayoutInflater.from(it),
+                        R.layout.send_sms_dialog,
+                        null,
+                        false
+                    )
+
+                    AlertDialog.Builder(it).setView(dialogBiding.root)
+                        .setPositiveButton("Send SMS") { dialog, which ->
+
+                            if (!dialogBiding.smsDestination.text.isNullOrBlank()) {
+                                smsInfo.to = dialogBiding.smsDestination.text.toString()
+                                smsSms(smsInfo)
+                            }
+
+                        }.setNegativeButton("Cancel") { dialog, which ->
+                        }.show()
+
+                    dialogBiding.smsInfo = smsInfo
+
+
+            }
+
+        }
+    }
+
+    private fun smsSms(smsInfo: SmsInfo) {
+
+
+    }
 }
